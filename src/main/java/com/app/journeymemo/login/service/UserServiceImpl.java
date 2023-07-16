@@ -8,6 +8,7 @@ import com.app.journeymemo.login.model.User;
 import com.app.journeymemo.login.repository.UserRepository;
 import com.app.journeymemo.login.request.UserRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService{
         if (matcher.matches()){
             var user = userMapper.mapToUserFromRequest(userRequest);
             userRepository.save(user);
+            log.info("User successfully created");
         }else throw new InvalidEmailException("Email format is not correct");
     }
 
