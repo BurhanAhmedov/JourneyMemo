@@ -89,6 +89,11 @@
             <artifactId>azure-data-appconfiguration</artifactId>
             <version>1.4.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.0.3</version>
+        </dependency>
 
     </dependencies>
 
@@ -107,6 +112,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>spring-boot-aws-exe</finalName>
     </build>
 
 </project>
