@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,18 +32,14 @@ public class UserServiceImpl implements UserService {
         final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Pattern pattern = Pattern.compile(EMAIL_REGEX);
         Matcher matcher = pattern.matcher(userLoginInfoRequest.getEmail());
-        if (userLoginRepository.checkUsernameUnique(userLoginInfoRequest.getUsername())==0) {
+        if (userLoginRepository.checkUsernameUnique(userLoginInfoRequest.getUsername()) == 0) {
             if (matcher.matches()) {
-                UUID randomId = UUID.randomUUID();
+
                 var userGeneral = userMapper.mapToUserGeneralFromRequest(userGeneralInfoRequest);
-                userGeneral.setId(randomId);
-                userGeneral.getId();
                 var userLogin = userMapper.mapToUserLoginFromRequest(userLoginInfoRequest);
-                userLogin.setId(randomId);
-                userLogin.getId();
-                userLogin.setFkUserId(randomId); //TODO fkUserId (id null)
                 userLoginRepository.save(userLogin);
                 userGeneralRepository.save(userGeneral);
+
                 log.info("User successfully is created");
             } else throw new InvalidEmailException("Email format is not correct: " + userLoginInfoRequest.getEmail());
         } else {
@@ -88,7 +83,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateLoginInfoUser(Long id, UserLoginInfoRequest userLoginInfoRequest) {
         if (userLoginRepository.existsById(id)) {
-            if (userLoginRepository.checkUsernameUnique(userLoginInfoRequest.getUsername())==0) {
+            if (userLoginRepository.checkUsernameUnique(userLoginInfoRequest.getUsername()) == 0) {
                 final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
                 Pattern pattern = Pattern.compile(EMAIL_REGEX);
                 Matcher matcher = pattern.matcher(userLoginInfoRequest.getEmail());
