@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 public class UserGeneralInfoRequest {
-    String id;
     String name;
     String surname;
     LocalDate birthday;

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -17,9 +18,9 @@ import java.time.LocalDate;
 @Table(name = "user_general_info")
 public class UserGeneralInfo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "id", nullable = false)
-    Long id;
+    UUID id;
     @Column(nullable = false)
     String name;
     @Column(nullable = false)

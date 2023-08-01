@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.UUID;
+
 @Data
 @Entity
 @AllArgsConstructor
@@ -12,9 +14,9 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "user_login_info")
 public class UserLoginInfo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    Long id;
+    UUID id;
     @Column(nullable = false)
     String email;
     @Column(nullable = false)
@@ -22,6 +24,6 @@ public class UserLoginInfo {
     @Column(nullable = false)
     String username;
     @Column(name = "fk_user_id")
-    Long fkUserId;
+    UUID fkUserId;
 
 }

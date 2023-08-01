@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,9 +35,14 @@ public class UserServiceImpl implements UserService {
         Matcher matcher = pattern.matcher(userLoginInfoRequest.getEmail());
         if (userLoginRepository.checkUsernameUnique(userLoginInfoRequest.getUsername())==0) {
             if (matcher.matches()) {
+                UUID randomId = UUID.randomUUID();
                 var userGeneral = userMapper.mapToUserGeneralFromRequest(userGeneralInfoRequest);
+                userGeneral.setId(randomId);
+                userGeneral.getId();
                 var userLogin = userMapper.mapToUserLoginFromRequest(userLoginInfoRequest);
-                userLogin.setFkUserId(userGeneral.getId());
+                userLogin.setId(randomId);
+                userLogin.getId();
+                userLogin.setFkUserId(randomId); //TODO fkUserId (id null)
                 userLoginRepository.save(userLogin);
                 userGeneralRepository.save(userGeneral);
                 log.info("User successfully is created");
