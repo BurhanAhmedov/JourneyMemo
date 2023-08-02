@@ -11,10 +11,13 @@ public interface UserService {
 
     List<UserDto> getAllUser();
 
-    UserDto getUserById(Long id);
+    UserDto getUserById(String id);
+    UserDto getUserByUsername(String username);
 
-    void updateUserById(Long id, UserRequest userRequest);
+    void updateUserById(String id, UserRequest userRequest);
 
-    void deleteUser(Long id);
+    void deleteUser(String id);
+
+    String loginUser(String username,String password);
 
 }

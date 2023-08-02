@@ -10,10 +10,10 @@ import com.app.journeymemo.login.repository.UserRepository;
 import com.app.journeymemo.login.request.UserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,17 +48,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(Long id) {
+    public UserDto getUserById(String id) {
         var user = userRepository.findById(id).orElseThrow(() ->
                 new UserNotFoundException("User not found by id:" + id));
-        var userDto = userMapper.mapToUserDto(Optional.ofNullable(user));
+        var userDto = userMapper.mapToUserDto(user);
         return userDto;
-
-
     }
 
     @Override
-    public void updateUserById(Long id, UserRequest userRequest) {
+    public UserDto getUserByUsername(String username) {
+        var user = userRepository.findUserByUsername(username);
+        if (user != null) {
+            UserDto userDto = userMapper.mapToUserDto(user);
+            return userDto;
+        }
+        throw new UserNotFoundException("User not found by username:" + username);
+    }
+
+
+    @Override
+    public void updateUserById(String id, UserRequest userRequest) {
         if (userRepository.existsById(id)) {
             userRepository.updateUserById(
                     userRequest.getName(),
@@ -77,11 +86,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(String id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             log.info("User successfully is deleted by" + id);
         } else
             throw new UserNotFoundException("User not found by " + id);
+    }
+
+    @Override
+    public String loginUser(String username, String password) {
+        var user = userRepository.findUserByUsername(username);
+        if (user!=null){
+            if (user.getPassword().equals(password)){
+                return HttpStatus.OK.name();
+            }else{
+                return HttpStatus.UNAUTHORIZED.name();
+            }
+        } return HttpStatus.NOT_FOUND.name();
     }
 }

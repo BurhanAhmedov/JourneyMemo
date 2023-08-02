@@ -1,6 +1,7 @@
 package com.app.journeymemo.login.controller;
 
 import com.app.journeymemo.login.dto.UserDto;
+import com.app.journeymemo.login.request.UserLoginRequest;
 import com.app.journeymemo.login.request.UserRequest;
 import com.app.journeymemo.login.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,20 +34,29 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUser());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    @GetMapping("/id/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
+
     @PutMapping("/{id}")
-    public void updateUser(@PathVariable Long id, @RequestBody UserRequest generalInfoRequest) {
+    public void updateUser(@PathVariable String id, @RequestBody UserRequest generalInfoRequest) {
         userService.updateUserById(id, generalInfoRequest);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUserById(@PathVariable Long id) {
+    public void deleteUserById(@PathVariable String id) {
         userService.deleteUser(id);
     }
 
+    @PostMapping("/login")
+    public String loginUser(@RequestBody UserLoginRequest userRequest) {
+        return userService.loginUser(userRequest.getUsername(), userRequest.getPassword());
+    }
 
 }
