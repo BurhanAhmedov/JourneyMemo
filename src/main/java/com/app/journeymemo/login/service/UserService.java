@@ -1,24 +1,20 @@
 package com.app.journeymemo.login.service;
 
 
-import com.app.journeymemo.login.dto.UserGeneralInfoDto;
-import com.app.journeymemo.login.request.UserGeneralInfoRequest;
-import com.app.journeymemo.login.request.UserLoginInfoRequest;
+import com.app.journeymemo.login.dto.UserDto;
+import com.app.journeymemo.login.request.UserRequest;
 
 import java.util.List;
 
 public interface UserService {
-    void createUser(UserGeneralInfoRequest userGeneralInfoRequest, UserLoginInfoRequest userLoginInfoRequest);
+    void createUser(UserRequest userRequest);
 
-    List<UserGeneralInfoDto> getAllUser();
+    List<UserDto> getAllUser();
 
-    UserGeneralInfoDto getUserById(Long id);
+    UserDto getUserById(Long id);
 
-    void updateGeneralInfoUser(Long id, UserGeneralInfoRequest userGeneralInfoRequest);
-
-    void updateLoginInfoUser(Long id, UserLoginInfoRequest userLogin);
+    void updateUserById(Long id, UserRequest userRequest);
 
     void deleteUser(Long id);
-
 
 }

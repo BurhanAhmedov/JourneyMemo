@@ -7,24 +7,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Data
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "user_login_info")
-public class UserLoginInfo {
+@Table(name = "user_general_info")
+public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, length = 38)
     String id;
+    @Column(nullable = false)
+    String name;
+    @Column(nullable = false)
+    String surname;
     @Column(nullable = false)
     String email;
     @Column(nullable = false)
     String password;
     @Column(nullable = false)
     String username;
-    @Column(name = "fk_user_id", length = 38)
-    String fkUserId;
-
+    @Column(nullable = false)
+    LocalDate birthday;
+    @Column(nullable = false)
+    String country;
+    @Column(nullable = false)
+    String gender;
 }
