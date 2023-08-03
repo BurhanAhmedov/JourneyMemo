@@ -2,15 +2,14 @@ package com.app.journeymemo.login.service;
 
 
 import com.app.journeymemo.login.dto.UserDto;
-import com.app.journeymemo.login.exception.InvalidEmailException;
 import com.app.journeymemo.login.exception.UserNotFoundException;
-import com.app.journeymemo.login.exception.UsernameAlreadyExistsException;
 import com.app.journeymemo.login.mapper.UserMapper;
 import com.app.journeymemo.login.repository.UserRepository;
 import com.app.journeymemo.login.request.UserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,18 +24,31 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public void createUser(UserRequest userRequest) {
+    public ResponseEntity<String> createUser(UserRequest userRequest) {
         final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Pattern pattern = Pattern.compile(EMAIL_REGEX);
         Matcher matcher = pattern.matcher(userRequest.getEmail());
         if (userRepository.checkUsernameUnique(userRequest.getUsername()) == 0) {
-            if (matcher.matches()) {
-                var user = userMapper.mapToUserGeneralFromRequest(userRequest);
-                userRepository.save(user);
-                log.info("User successfully is created");
-            } else throw new InvalidEmailException("Email format is not correct: " + userRequest.getEmail());
+            if (userRepository.findUserByEmail(userRequest.getEmail()).isEmpty()) {
+                if (matcher.matches()) {
+                    var user = userMapper.mapToUserGeneralFromRequest(userRequest);
+                    userRepository.save(user);
+                    log.info("User successfully is created");
+                    return ResponseEntity.ok("Registration is successful");
+                } else {
+                    log.error("Email format is not correct: " + userRequest.getEmail());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email format is not correct");
+                    //throw new InvalidEmailException("Email format is not correct: " + userRequest.getEmail());
+                }
+            } else {
+                log.error("Email already exists: " + userRequest.getEmail());
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+                // throw new UserAlreadyExistsException("Email already exists: " + userRequest.getEmail());
+            }
         } else {
-            throw new UsernameAlreadyExistsException("Username already exists: " + userRequest.getUsername());
+            log.error("Username already exists: " + userRequest.getUsername());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+            // throw new UserAlreadyExistsException("Username already exists: " + userRequest.getUsername());
         }
     }
 
@@ -48,21 +60,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(String id) {
-        var user = userRepository.findById(id).orElseThrow(() ->
-                new UserNotFoundException("User not found by id:" + id));
-        var userDto = userMapper.mapToUserDto(user);
-        return userDto;
+    public ResponseEntity<UserDto> getUserById(String id) {
+        var user = userRepository.findById(id);
+        if (user.isPresent()) {
+            var userDto = userMapper.mapToUserDto(user.get());
+            return ResponseEntity.ok(userDto);
+        }
+        log.error("User Not Found by id:" + id);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserDto());
     }
 
     @Override
-    public UserDto getUserByUsername(String username) {
+    public ResponseEntity<UserDto> getUserByUsername(String username) {
         var user = userRepository.findUserByUsername(username);
-        if (user != null) {
-            UserDto userDto = userMapper.mapToUserDto(user);
-            return userDto;
+        if (user!=null) {
+            var userDto = userMapper.mapToUserDto(user);
+            return ResponseEntity.ok(userDto);
         }
-        throw new UserNotFoundException("User not found by username:" + username);
+        log.error("User not found by username:" +username);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserDto());
     }
 
 
@@ -95,14 +111,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String loginUser(String username, String password) {
+    public ResponseEntity<String> loginUser(String username, String password) {
         var user = userRepository.findUserByUsername(username);
-        if (user!=null){
-            if (user.getPassword().equals(password)){
-                return HttpStatus.OK.name();
-            }else{
-                return HttpStatus.UNAUTHORIZED.name();
+        if (user != null) {
+            if (user.getPassword().equals(password)) {
+                return ResponseEntity.ok("Welcome " + username);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password is not correct");
             }
-        } return HttpStatus.NOT_FOUND.name();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username is not exists");
     }
 }

@@ -25,8 +25,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserRequest userRequest) {
-        userService.createUser(userRequest);
-        return ResponseEntity.ok("User registered successfully.");
+       return userService.createUser(userRequest);
     }
 
     @GetMapping()
@@ -36,12 +35,12 @@ public class UserController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        return userService.getUserById(id);
     }
 
     @GetMapping("/username/{username}")
     public ResponseEntity<UserDto> getUserByUsername(@PathVariable String username) {
-        return ResponseEntity.ok(userService.getUserByUsername(username));
+        return userService.getUserByUsername(username);
     }
 
     @PutMapping("/{id}")
@@ -55,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody UserLoginRequest userRequest) {
+    public ResponseEntity<String> loginUser(@RequestBody UserLoginRequest userRequest) {
         return userService.loginUser(userRequest.getUsername(), userRequest.getPassword());
     }
 
