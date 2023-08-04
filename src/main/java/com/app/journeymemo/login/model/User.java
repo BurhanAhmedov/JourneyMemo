@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "user_general_info")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
